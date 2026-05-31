@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Acting Verb Prompt Generator</title>
+  <style>
+    :root {
+      --bg: #101116;
+      --panel: #1b1d27;
+      --text: #f5f5f7;
+      --muted: #a8abb8;
+      --accent: #7dd3fc;
+      --button: #292c3a;
+      --button-on: #3b82f6;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      overflow-x: hidden;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 920px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 18px;
+      gap: 14px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(20px, 4vw, 34px);
+      letter-spacing: 0.03em;
+    }
+
+    .settings-toggle {
+      border: 0;
+      background: var(--button);
+      color: var(--text);
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .settings {
+      background: var(--panel);
+      border-radius: 22px;
+      padding: 16px;
+      display: grid;
+      gap: 16px;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.25);
+    }
+
+    .settings.hidden {
+      display: none;
+    }
+
+    .setting-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+    }
+
+    label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 15px;
+      user-select: none;
+    }
+
+    input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--button-on);
+    }
+
+    .speed-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(76px, 1fr));
+      gap: 8px;
+      width: 100%;
+    }
+
+    .speed-btn, .control-btn {
+      border: 0;
+      background: var(--button);
+      color: var(--text);
+      padding: 12px;
+      border-radius: 14px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .speed-btn.active, .control-btn.active {
+      background: var(--button-on);
+      color: white;
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.15) inset;
+    }
+
+    .custom-speed {
+      width: 100%;
+      display: flex;
+      gap: 8px;
+    }
+
+    .custom-speed input {
+      flex: 1;
+      min-width: 0;
+      background: #101116;
+      color: var(--text);
+      border: 1px solid #3a3d4d;
+      border-radius: 14px;
+      padding: 12px;
+      font-size: 16px;
+    }
+
+    .prompt-area {
+      flex: 1;
+      min-height: 340px;
+      background: radial-gradient(circle at top, #202435, #101116 62%);
+      border-radius: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 30px 18px;
+      touch-action: pan-y;
+      user-select: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .verb {
+      font-size: clamp(48px, 12vw, 130px);
+      font-weight: 900;
+      line-height: 0.95;
+      margin-bottom: 18px;
+      text-transform: uppercase;
+      transition: color 180ms ease, transform 180ms ease;
+      word-break: break-word;
+    }
+
+    .category {
+      font-size: clamp(22px, 5vw, 44px);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .counter {
+      position: absolute;
+      bottom: 16px;
+      right: 18px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+
+    .fullscreen .topbar,
+    .fullscreen .settings,
+    .fullscreen .controls {
+      display: none !important;
+    }
+
+    .fullscreen .app {
+      max-width: none;
+      padding: 0;
+    }
+
+    .fullscreen .prompt-area {
+      min-height: 100vh;
+      border-radius: 0;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .category-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 8px;
+    }
+
+    .category-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 10px;
+      background: #101116;
+      border-radius: 12px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex: 0 0 auto;
+    }
+
+    @media (max-width: 540px) {
+      .controls {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .control-btn {
+        padding: 13px 8px;
+        font-size: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <div class="topbar">
+      <h1>ACTING VERB PROMPT GENERATOR</h1>
+      <button class="settings-toggle" id="settingsToggle">Settings</button>
+    </div>
+
+    <section class="settings" id="settingsPanel">
+      <div class="setting-row">
+        <label><input type="checkbox" id="randomMode" checked /> Random from each category</label>
+        <label><input type="checkbox" id="alphaMode" /> Alphabetic from each category</label>
+        <label><input type="checkbox" id="audioOn" /> Audio on</label>
+      </div>
+
+      <div>
+        <div class="hint">Speed in seconds. Tap a box to highlight it. The next entry will use the new speed.</div>
+        <div class="speed-grid" id="speedGrid">
+          <button class="speed-btn active" data-speed="5">5s</button>
+          <button class="speed-btn" data-speed="10">10s</button>
+          <button class="speed-btn" data-speed="15">15s</button>
+          <button class="speed-btn" data-speed="20">20s</button>
+          <button class="speed-btn" data-speed="30">30s</button>
+          <button class="speed-btn" data-speed="60">60s</button>
+        </div>
+      </div>
+
+      <div class="custom-speed">
+        <input id="customSpeed" type="number" min="1" max="999" placeholder="Custom seconds" />
+        <button class="speed-btn" id="customSpeedBtn">Use</button>
+      </div>
+
+      <div>
+        <div class="hint">Category colors</div>
+        <div class="category-list" id="categoryList"></div>
+      </div>
+
+      <div class="hint">Swipe left/right on the big prompt area for next/previous. In fullscreen, tap the screen once to go next. Press Esc to leave fullscreen.</div>
+    </section>
+
+    <section class="prompt-area" id="promptArea">
+      <div class="verb" id="verbText">Persuade</div>
+      <div class="category" id="categoryText">Influence</div>
+      <div class="counter" id="counterText">1 / 148</div>
+    </section>
+
+    <section class="controls" id="controls">
+      <button class="control-btn" id="startBtn">Start</button>
+      <button class="control-btn" id="pauseBtn">Pause</button>
+      <button class="control-btn" id="prevBtn">Prev</button>
+      <button class="control-btn" id="nextBtn">Next</button>
+      <button class="control-btn" id="fullBtn">Full</button>
+    </section>
+  </main>
+
+  <script>
+    const rawPrompts = `
+Persuade - (Influence)
+Convince - (Influence)
+Influence - (Influence)
+Inspire - (Influence)
+Motivate - (Influence)
+Encourage - (Influence)
+Recruit - (Influence)
+Convert - (Influence)
+Educate - (Influence)
+Teach - (Influence)
+Sell - (Influence)
+Pitch - (Influence)
+Negotiate - (Influence)
+Bargain - (Influence)
+Sway - (Influence)
+Comfort - (Connection)
+Reassure - (Connection)
+Support - (Connection)
+Nurture - (Connection)
+Cherish - (Connection)
+Admire - (Connection)
+Appreciate - (Connection)
+Welcome - (Connection)
+Embrace - (Connection)
+Include - (Connection)
+Befriend - (Connection)
+Praise - (Connection)
+Thank - (Connection)
+Celebrate - (Connection)
+Flirt - (Romance)
+Seduce - (Romance)
+Charm - (Romance)
+Attract - (Romance)
+Entice - (Romance)
+Captivate - (Romance)
+Impress - (Romance)
+Enchant - (Romance)
+Adore - (Romance)
+Woo - (Romance)
+Tempt - (Romance)
+Fascinate - (Romance)
+Compliment - (Romance)
+Invite - (Romance)
+Excite - (Romance)
+Command - (Power)
+Control - (Power)
+Dominate - (Power)
+Intimidate - (Power)
+Threaten - (Power)
+Pressure - (Power)
+Challenge - (Power)
+Confront - (Power)
+Overpower - (Power)
+Corner - (Power)
+Demand - (Power)
+Punish - (Power)
+Discipline - (Power)
+Humiliate - (Power)
+Crush - (Power)
+Accuse - (Conflict)
+Blame - (Conflict)
+Criticize - (Conflict)
+Insult - (Conflict)
+Mock - (Conflict)
+Provoke - (Conflict)
+Expose - (Conflict)
+Shame - (Conflict)
+Attack - (Conflict)
+Reject - (Conflict)
+Dismiss - (Conflict)
+Sabotage - (Conflict)
+Undermine - (Conflict)
+Interrogate - (Conflict)
+Trap - (Conflict)
+Protect - (Care)
+Defend - (Care)
+Shield - (Care)
+Rescue - (Care)
+Save - (Care)
+Guide - (Care)
+Advise - (Care)
+Mentor - (Care)
+Assist - (Care)
+Serve - (Care)
+Help - (Care)
+Guard - (Care)
+Heal - (Care)
+Investigate - (Discovery)
+Question - (Discovery)
+Examine - (Discovery)
+Probe - (Discovery)
+Discover - (Discovery)
+Uncover - (Discovery)
+Reveal - (Discovery)
+Explore - (Discovery)
+Test - (Discovery)
+Analyze - (Discovery)
+Inspect - (Discovery)
+Learn - (Discovery)
+Understand - (Discovery)
+Clarify - (Discovery)
+Verify - (Discovery)
+Dazzle - (Status)
+Amaze - (Status)
+Astonish - (Status)
+Entertain - (Status)
+Delight - (Status)
+Demonstrate - (Status)
+Prove - (Status)
+Establish - (Status)
+Distinguish - (Status)
+Show Off - (Status)
+Avoid - (Distance)
+Escape - (Distance)
+Exclude - (Distance)
+Isolate - (Distance)
+Ignore - (Distance)
+Evade - (Distance)
+Abandon - (Distance)
+Detach - (Distance)
+Withdraw - (Distance)
+Hide - (Distance)
+Disappear - (Distance)
+Resist - (Distance)
+Refuse - (Distance)
+Confess - (Vulnerability)
+Apologize - (Vulnerability)
+Plead - (Vulnerability)
+Beg - (Vulnerability)
+Ask - (Vulnerability)
+Seek - (Vulnerability)
+Request - (Vulnerability)
+Trust - (Vulnerability)
+Surrender - (Vulnerability)
+Admit - (Vulnerability)
+Open Up - (Vulnerability)
+Connect - (Vulnerability)
+Share - (Vulnerability)
+Tease - (Comedy)
+Confuse - (Comedy)
+Surprise - (Comedy)
+Shock - (Comedy)
+Distract - (Comedy)
+Exaggerate - (Comedy)
+Parody - (Comedy)
+Imitate - (Comedy)
+Mislead - (Comedy)
+Trick - (Comedy)
+Ridicule - (Comedy)
+Play - (Comedy)
+Amuse - (Comedy)
+Manipulate - (Tactics)
+Validate - (Tactics)
+Empower - (Tactics)
+Calm - (Tactics)
+Excite - (Tactics)
+Recruit - (Tactics)
+Celebrate - (Tactics)
+Challenge - (Tactics)
+Confront - (Tactics)
+Support - (Tactics)
+`;
+
+    const categoryColors = {
+      Influence: '#38bdf8',
+      Connection: '#34d399',
+      Romance: '#fb7185',
+      Power: '#f97316',
+      Conflict: '#ef4444',
+      Care: '#22c55e',
+      Discovery: '#a78bfa',
+      Status: '#facc15',
+      Distance: '#94a3b8',
+      Vulnerability: '#f0abfc',
+      Comedy: '#2dd4bf',
+      Tactics: '#c084fc'
+    };
+
+    const prompts = rawPrompts.trim().split('\n').map(line => {
+      const match = line.match(/^(.+?)\s-\s\((.+?)\)$/);
+      return { verb: match[1].trim(), category: match[2].trim() };
+    });
+
+    const byCategory = prompts.reduce((acc, item) => {
+      if (!acc[item.category]) acc[item.category] = [];
+      acc[item.category].push(item);
+      return acc;
+    }, {});
+
+    Object.keys(byCategory).forEach(cat => {
+      byCategory[cat].sort((a, b) => a.verb.localeCompare(b.verb));
+    });
+
+    const categories = Object.keys(byCategory);
+
+    let currentIndex = 0;
+    let categoryIndex = 0;
+    let itemIndexByCategory = Object.fromEntries(categories.map(cat => [cat, 0]));
+    let history = [];
+    let historyPosition = -1;
+    let timer = null;
+    let speedSeconds = 5;
+    let isRunning = false;
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    const verbText = document.getElementById('verbText');
+    const categoryText = document.getElementById('categoryText');
+    const counterText = document.getElementById('counterText');
+    const promptArea = document.getElementById('promptArea');
+    const randomMode = document.getElementById('randomMode');
+    const alphaMode = document.getElementById('alphaMode');
+    const audioOn = document.getElementById('audioOn');
+    const settingsPanel = document.getElementById('settingsPanel');
+    const settingsToggle = document.getElementById('settingsToggle');
+    const categoryList = document.getElementById('categoryList');
+
+    function renderCategoryList() {
+      categoryList.innerHTML = categories.map(cat => `
+        <div class="category-pill">
+          <span class="dot" style="background:${categoryColors[cat]}"></span>
+          ${cat}
+        </div>
+      `).join('');
+    }
+
+    function speak(item) {
+      if (!audioOn.checked || !('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(`${item.verb}. ${item.category}.`);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.95;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function showItem(item, addToHistory = true) {
+      const globalIndex = prompts.findIndex(p => p.verb === item.verb && p.category === item.category);
+      currentIndex = globalIndex >= 0 ? globalIndex : currentIndex;
+      const color = categoryColors[item.category] || '#ffffff';
+      verbText.textContent = item.verb;
+      categoryText.textContent = item.category;
+      verbText.style.color = color;
+      counterText.textContent = `${currentIndex + 1} / ${prompts.length}`;
+      promptArea.style.boxShadow = `0 0 0 2px ${color}22 inset`;
+      verbText.style.transform = 'scale(1.03)';
+      setTimeout(() => verbText.style.transform = 'scale(1)', 140);
+
+      if (addToHistory) {
+        history = history.slice(0, historyPosition + 1);
+        history.push(item);
+        historyPosition = history.length - 1;
+      }
+
+      speak(item);
+    }
+
+    function nextAlphabeticCategoryItem() {
+      const cat = categories[categoryIndex % categories.length];
+      const list = byCategory[cat];
+      const item = list[itemIndexByCategory[cat] % list.length];
+      itemIndexByCategory[cat]++;
+      categoryIndex++;
+      return item;
+    }
+
+    function nextRandomCategoryItem() {
+      const cat = categories[categoryIndex % categories.length];
+      const list = byCategory[cat];
+      const item = list[Math.floor(Math.random() * list.length)];
+      categoryIndex++;
+      return item;
+    }
+
+    function nextSequentialItem() {
+      currentIndex = (currentIndex + 1) % prompts.length;
+      return prompts[currentIndex];
+    }
+
+    function next() {
+      let item;
+      if (alphaMode.checked) item = nextAlphabeticCategoryItem();
+      else if (randomMode.checked) item = nextRandomCategoryItem();
+      else item = nextSequentialItem();
+      showItem(item);
+    }
+
+    function prev() {
+      if (historyPosition > 0) {
+        historyPosition--;
+        showItem(history[historyPosition], false);
+      } else {
+        currentIndex = (currentIndex - 1 + prompts.length) % prompts.length;
+        showItem(prompts[currentIndex]);
+      }
+    }
+
+    function start() {
+      pause();
+      isRunning = true;
+      document.getElementById('startBtn').classList.add('active');
+      timer = setInterval(next, speedSeconds * 1000);
+    }
+
+    function pause() {
+      isRunning = false;
+      document.getElementById('startBtn').classList.remove('active');
+      if (timer) clearInterval(timer);
+      timer = null;
+    }
+
+    function restartTimerIfRunning() {
+      if (isRunning) start();
+    }
+
+    function setSpeed(seconds, clickedButton = null) {
+      speedSeconds = Math.max(1, Number(seconds) || 5);
+      document.querySelectorAll('.speed-btn').forEach(btn => btn.classList.remove('active'));
+      if (clickedButton) clickedButton.classList.add('active');
+      restartTimerIfRunning();
+    }
+
+    function enterFullscreen() {
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) elem.requestFullscreen();
+      document.body.classList.add('fullscreen');
+    }
+
+    function exitFullscreenCleanup() {
+      if (!document.fullscreenElement) document.body.classList.remove('fullscreen');
+    }
+
+    document.getElementById('startBtn').addEventListener('click', start);
+    document.getElementById('pauseBtn').addEventListener('click', pause);
+    document.getElementById('nextBtn').addEventListener('click', next);
+    document.getElementById('prevBtn').addEventListener('click', prev);
+    document.getElementById('fullBtn').addEventListener('click', enterFullscreen);
+
+    settingsToggle.addEventListener('click', () => {
+      settingsPanel.classList.toggle('hidden');
+    });
+
+    randomMode.addEventListener('change', () => {
+      if (randomMode.checked) alphaMode.checked = false;
+    });
+
+    alphaMode.addEventListener('change', () => {
+      if (alphaMode.checked) randomMode.checked = false;
+    });
+
+    document.getElementById('speedGrid').addEventListener('click', event => {
+      const btn = event.target.closest('.speed-btn');
+      if (!btn) return;
+      setSpeed(btn.dataset.speed, btn);
+    });
+
+    document.getElementById('customSpeedBtn').addEventListener('click', event => {
+      const value = document.getElementById('customSpeed').value;
+      setSpeed(value, event.currentTarget);
+    });
+
+    promptArea.addEventListener('touchstart', event => {
+      touchStartX = event.changedTouches[0].screenX;
+      touchStartY = event.changedTouches[0].screenY;
+    }, { passive: true });
+
+    promptArea.addEventListener('touchend', event => {
+      const dx = event.changedTouches[0].screenX - touchStartX;
+      const dy = event.changedTouches[0].screenY - touchStartY;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 45) {
+        dx < 0 ? next() : prev();
+      }
+    }, { passive: true });
+
+    promptArea.addEventListener('click', () => {
+      if (document.fullscreenElement) next();
+    });
+
+    document.addEventListener('fullscreenchange', exitFullscreenCleanup);
+
+    document.addEventListener('keydown', event => {
+      if (event.code === 'Space') {
+        event.preventDefault();
+        isRunning ? pause() : start();
+      }
+      if (event.key === 'ArrowRight') next();
+      if (event.key === 'ArrowLeft') prev();
+      if (event.key.toLowerCase() === 'f') enterFullscreen();
+    });
+
+    renderCategoryList();
+    showItem(prompts[0]);
+  </script>
+</body>
+</html>
