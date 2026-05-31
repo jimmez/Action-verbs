@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Acting Verb Prompt Generator v4</title>
+  <title>Acting Verb Prompt Generator v6</title>
   <style>
     :root {
       --bg: #101116;
@@ -40,8 +40,8 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      padding: 14px;
-      gap: 12px;
+      padding: 10px;
+      gap: 8px;
     }
 
     .topbar {
@@ -81,10 +81,10 @@
 
     .page {
       background: var(--panel);
-      border-radius: 22px;
-      padding: 14px;
+      border-radius: 18px;
+      padding: 10px;
       display: grid;
-      gap: 14px;
+      gap: 9px;
       box-shadow: 0 10px 35px rgba(0,0,0,0.25);
     }
 
@@ -125,9 +125,9 @@
       border: 0;
       background: var(--button);
       color: var(--text);
-      padding: 12px;
-      border-radius: 14px;
-      font-size: 16px;
+      padding: 10px;
+      border-radius: 12px;
+      font-size: 15px;
       cursor: pointer;
     }
 
@@ -146,15 +146,15 @@
     }
 
     .custom-speed input {
-      width: 72px;
+      width: 64px;
       min-width: 0;
       text-align: center;
       background: #101116;
       color: var(--text);
       border: 1px solid #3a3d4d;
-      border-radius: 14px;
-      padding: 12px 6px;
-      font-size: 19px;
+      border-radius: 12px;
+      padding: 10px 5px;
+      font-size: 18px;
       font-weight: bold;
     }
 
@@ -165,14 +165,14 @@
 
     #decreaseSpeed,
     #increaseSpeed {
-      min-height: 58px;
-      font-size: 24px;
+      min-height: 48px;
+      font-size: 22px;
       font-weight: bold;
     }
 
     .prompt-area {
       flex: 1;
-      min-height: 335px;
+      min-height: 280px;
       background: radial-gradient(circle at top, #202435, #101116 62%);
       border-radius: 28px;
       display: flex;
@@ -180,7 +180,7 @@
       justify-content: center;
       align-items: center;
       text-align: center;
-      padding: 24px 10px;
+      padding: 18px 8px;
       touch-action: pan-y;
       user-select: none;
       position: relative;
@@ -188,17 +188,17 @@
     }
 
     .verb {
-      font-size: clamp(34px, 15vw, 112px);
+      font-size: clamp(30px, 13vw, 104px);
       font-weight: 900;
       line-height: 0.96;
-      margin-bottom: 16px;
+      margin-bottom: 10px;
       max-width: 100%;
       overflow-wrap: anywhere;
       transition: color 180ms ease, transform 180ms ease;
     }
 
     .category {
-      font-size: clamp(17px, 5vw, 38px);
+      font-size: clamp(15px, 4.5vw, 34px);
       letter-spacing: 0.03em;
       transition: color 180ms ease;
     }
@@ -240,8 +240,8 @@
 
     .hint {
       color: var(--muted);
-      font-size: 13px;
-      line-height: 1.4;
+      font-size: 12px;
+      line-height: 1.25;
     }
 
     .page-nav {
@@ -275,8 +275,8 @@
 
     @media (max-width: 540px) {
       .app {
-        padding: 10px;
-        gap: 10px;
+        padding: 8px;
+        gap: 7px;
       }
 
       .controls {
@@ -302,7 +302,24 @@
       }
 
       .verb {
-        font-size: clamp(32px, 14vw, 76px);
+        font-size: clamp(28px, 12.5vw, 68px);
+      }
+
+      .prompt-area {
+        min-height: 245px;
+      }
+
+      .topbar {
+        gap: 8px;
+      }
+
+      h1 {
+        font-size: 17px;
+      }
+
+      .version {
+        font-size: 11px;
+        min-height: 14px;
       }
     }
   </style>
@@ -314,7 +331,7 @@
       <button class="settings-toggle" id="settingsToggle">Settings</button>
     </div>
 
-    <div class="version" id="versionText">Jimmy James - 31.05.2026 - v4</div>
+    <div class="version" id="versionText">Jimmy James - 31.05.2026 - v6</div>
 
     <section class="page" id="settingsPage">
       <div class="page-nav">
@@ -345,7 +362,6 @@
         <button class="small-btn" id="increaseSpeed">+1</button>
       </div>
 
-      <div class="hint">Category sequence uses Happy â†’ Angry â†’ Sad â†’ Happy variation. Category number appears before category.</div>
       <div class="hint">Swipe left/right on the big prompt for next/previous. Swipe left/right here to switch between Settings and Colors.</div>
     </section>
 
@@ -652,7 +668,7 @@ Support - (Tactics)
       if (!audioOn.checked || !('speechSynthesis' in window)) return;
       window.speechSynthesis.cancel();
       const info = categoryInfo[item.category];
-      const utterance = new SpeechSynthesisUtterance(`${item.verb}. ${info.number}. ${item.category}.`);
+      const utterance = new SpeechSynthesisUtterance(`${item.verb}.`);
       utterance.lang = 'en-US';
       utterance.rate = 0.95;
       window.speechSynthesis.speak(utterance);
