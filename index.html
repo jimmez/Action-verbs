@@ -3,31 +3,439 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Acting Verb Prompt Generator v9</title>
+  <title>Acting Verb Prompt Generator v10</title>
   <style>
-    :root{--bg:#101116;--panel:#1b1d27;--text:#f5f5f7;--muted:#a8abb8;--button:#292c3a;--button-on:#3b82f6}*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;overflow-x:hidden}body{display:flex;justify-content:center;align-items:stretch}.app{width:100%;max-width:920px;min-height:100vh;display:flex;flex-direction:column;padding:8px;gap:7px}.topbar{display:flex;justify-content:space-between;align-items:center;gap:8px}h1{margin:0;font-size:clamp(17px,4vw,32px);letter-spacing:.02em}.version{min-height:14px;font-size:11px;color:var(--muted);opacity:1;transition:opacity 1.2s ease}.version.fade{opacity:0}.settings-toggle{border:0;background:var(--button);color:var(--text);padding:10px 12px;border-radius:12px;font-size:15px;cursor:pointer;white-space:nowrap}.page{background:var(--panel);border-radius:18px;padding:10px;display:grid;gap:9px;box-shadow:0 10px 35px rgba(0,0,0,.25)}.page.hidden{display:none}.setting-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px}label{display:inline-flex;align-items:center;gap:7px;color:var(--muted);font-size:14px;user-select:none}input[type=checkbox],input[type=radio]{width:19px;height:19px;accent-color:var(--button-on)}.speed-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;width:100%}.speed-btn,.control-btn,.small-btn{border:0;background:var(--button);color:var(--text);padding:10px;border-radius:12px;font-size:15px;cursor:pointer}.speed-btn.active,.control-btn.active,.small-btn.active{background:var(--button-on);color:white;box-shadow:0 0 0 2px rgba(255,255,255,.15) inset}.custom-speed{width:100%;display:grid;grid-template-columns:64px 1fr 1fr;gap:10px;align-items:center}.custom-speed input{width:64px;min-width:0;text-align:center;background:#101116;color:var(--text);border:1px solid #3a3d4d;border-radius:12px;padding:10px 5px;font-size:18px;font-weight:bold}.custom-speed input:focus,.seq-input:focus{outline:2px solid var(--button-on);border-color:var(--button-on)}#decreaseSpeed,#increaseSpeed{min-height:48px;font-size:22px;font-weight:bold}.prompt-area{flex:1;min-height:245px;background:radial-gradient(circle at top,#202435,#101116 62%);border-radius:28px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:18px 8px;touch-action:pan-y;user-select:none;position:relative;overflow:hidden}.verb{font-size:clamp(28px,12.5vw,68px);font-weight:900;line-height:.96;margin-bottom:10px;max-width:100%;overflow-wrap:anywhere;transition:color 180ms ease,transform 180ms ease}.category{font-size:clamp(15px,4.5vw,34px);letter-spacing:.03em;transition:color 180ms ease}.counter{position:absolute;bottom:14px;right:16px;font-size:13px;color:var(--muted)}.tap-zone{position:absolute;top:0;bottom:0;z-index:2}.tap-left{left:0;width:30%}.tap-middle{left:30%;width:40%}.tap-right{right:0;width:30%}.tap-label{position:absolute;bottom:13px;left:14px;font-size:11px;color:rgba(255,255,255,.25);pointer-events:none}.controls{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.fullscreen .topbar,.fullscreen .version,.fullscreen .page,.fullscreen .controls{display:none!important}.fullscreen .app{max-width:none;padding:0}.fullscreen .prompt-area{min-height:100vh;border-radius:0}.fullscreen .verb{font-size:clamp(42px,18vw,150px)}.hint{color:var(--muted);font-size:12px;line-height:1.25}.page-nav{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.category-list{display:grid;gap:8px}.category-card{display:grid;grid-template-columns:auto 1fr 58px auto auto;gap:7px;align-items:center;padding:8px;background:#101116;border-radius:12px;color:var(--muted);font-size:14px}.category-card.off{opacity:.45}.dot{width:12px;height:12px;border-radius:50%;flex:0 0 auto}.seq-input{width:58px;background:#0c0d12;color:var(--text);border:1px solid #3a3d4d;border-radius:10px;padding:8px 4px;text-align:center;font-size:15px}.tiny-btn{border:0;background:var(--button);color:var(--text);padding:8px 9px;border-radius:10px;font-size:14px;cursor:pointer}.color-row{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center;padding:10px;background:#101116;border-radius:12px;font-size:14px}@media(max-width:540px){.controls{grid-template-columns:repeat(3,1fr)}.control-btn,.speed-btn,.small-btn{padding:12px 7px;font-size:14px}.category-card{grid-template-columns:auto 1fr 48px}.category-card .tiny-btn{display:none}.seq-input{width:48px}}
+    :root {
+      --bg: #101116;
+      --panel: #1b1d27;
+      --text: #f5f5f7;
+      --muted: #a8abb8;
+      --button: #292c3a;
+      --button-on: #3b82f6;
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      overflow-x: hidden;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 920px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 8px;
+      gap: 7px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(17px, 4vw, 32px);
+      letter-spacing: 0.02em;
+    }
+
+    .version {
+      min-height: 14px;
+      font-size: 11px;
+      color: var(--muted);
+      opacity: 1;
+      transition: opacity 1.2s ease;
+    }
+
+    .version.fade { opacity: 0; }
+
+    .settings-toggle {
+      border: 0;
+      background: var(--button);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 15px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .page {
+      background: var(--panel);
+      border-radius: 18px;
+      padding: 10px;
+      display: grid;
+      gap: 9px;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.25);
+    }
+
+    .page.hidden { display: none; }
+
+    .setting-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    label {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 14px;
+      user-select: none;
+    }
+
+    input[type="checkbox"],
+    input[type="radio"] {
+      width: 19px;
+      height: 19px;
+      accent-color: var(--button-on);
+    }
+
+    .speed-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      width: 100%;
+    }
+
+    .speed-btn, .control-btn, .small-btn {
+      border: 0;
+      background: var(--button);
+      color: var(--text);
+      padding: 10px;
+      border-radius: 12px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    .speed-btn.active, .control-btn.active, .small-btn.active {
+      background: var(--button-on);
+      color: white;
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.15) inset;
+    }
+
+    .custom-speed {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 64px 1fr 1fr;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .custom-speed input {
+      width: 64px;
+      min-width: 0;
+      text-align: center;
+      background: #101116;
+      color: var(--text);
+      border: 1px solid #3a3d4d;
+      border-radius: 12px;
+      padding: 10px 5px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .custom-speed input:focus,
+    .seq-input:focus {
+      outline: 2px solid var(--button-on);
+      border-color: var(--button-on);
+    }
+
+    #decreaseSpeed, #increaseSpeed {
+      min-height: 48px;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .prompt-area {
+      flex: 1;
+      min-height: 245px;
+      background: radial-gradient(circle at top, #202435, #101116 62%);
+      border-radius: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 18px 8px;
+      touch-action: pan-y;
+      user-select: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .verb {
+      font-size: clamp(28px, 12.5vw, 68px);
+      font-weight: 900;
+      line-height: 0.96;
+      margin-bottom: 8px;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      transition: color 180ms ease, transform 180ms ease;
+    }
+
+    .hindi-line {
+      font-size: clamp(22px, 8vw, 46px);
+      font-weight: 800;
+      line-height: 0.98;
+      margin-bottom: 8px;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      transition: color 180ms ease;
+    }
+
+    .hindi-line.hide-hindi { display: none; }
+
+    .category {
+      font-size: clamp(15px, 4.5vw, 34px);
+      letter-spacing: 0.03em;
+      transition: color 180ms ease;
+    }
+
+    .counter {
+      position: absolute;
+      bottom: 14px;
+      right: 16px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .tap-zone {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      z-index: 2;
+    }
+
+    .tap-left { left: 0; width: 30%; }
+    .tap-middle { left: 30%; width: 40%; }
+    .tap-right { right: 0; width: 30%; }
+
+    .tap-label {
+      position: absolute;
+      bottom: 13px;
+      left: 14px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.25);
+      pointer-events: none;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+
+    .fullscreen .topbar,
+    .fullscreen .version,
+    .fullscreen .page,
+    .fullscreen .controls {
+      display: none !important;
+    }
+
+    .fullscreen .app {
+      max-width: none;
+      padding: 0;
+    }
+
+    .fullscreen .prompt-area {
+      min-height: 100vh;
+      border-radius: 0;
+    }
+
+    .fullscreen .verb { font-size: clamp(42px, 18vw, 150px); }
+    .fullscreen .hindi-line { font-size: clamp(34px, 12vw, 100px); }
+
+    .hint {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.25;
+    }
+
+    .page-nav {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .category-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .category-card {
+      display: grid;
+      grid-template-columns: auto 1fr 58px auto auto;
+      gap: 7px;
+      align-items: center;
+      padding: 8px;
+      background: #101116;
+      border-radius: 12px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .category-card.off { opacity: 0.45; }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex: 0 0 auto;
+    }
+
+    .seq-input {
+      width: 58px;
+      background: #0c0d12;
+      color: var(--text);
+      border: 1px solid #3a3d4d;
+      border-radius: 10px;
+      padding: 8px 4px;
+      text-align: center;
+      font-size: 15px;
+    }
+
+    .tiny-btn {
+      border: 0;
+      background: var(--button);
+      color: var(--text);
+      padding: 8px 9px;
+      border-radius: 10px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .color-row {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 8px;
+      align-items: center;
+      padding: 10px;
+      background: #101116;
+      border-radius: 12px;
+      font-size: 14px;
+    }
+
+    @media (max-width: 540px) {
+      .controls { grid-template-columns: repeat(3, 1fr); }
+      .control-btn, .speed-btn, .small-btn { padding: 12px 7px; font-size: 14px; }
+      .category-card { grid-template-columns: auto 1fr 48px; }
+      .category-card .tiny-btn { display: none; }
+      .seq-input { width: 48px; }
+    }
   </style>
 </head>
 <body>
   <main class="app">
-    <div class="topbar"><h1>Acting Verb Prompt Generator</h1><button class="settings-toggle" id="settingsToggle">Options</button></div>
-    <div class="version" id="versionText">Jimmy James - 31.05.2026 - v9</div>
+    <div class="topbar">
+      <h1>Acting Verb Prompt Generator</h1>
+      <button class="settings-toggle" id="settingsToggle">Options</button>
+    </div>
+
+    <div class="version" id="versionText">Jimmy James - 31.05.2026 - v10</div>
 
     <section class="page" id="settingsPage">
-      <div class="page-nav"><button class="small-btn active" id="settingsPageBtn">Main</button><button class="small-btn" id="categoryPageBtn">Categories</button><button class="small-btn" id="colorsPageBtn">Colors</button></div>
-      <div class="setting-row"><label><input type="checkbox" id="audioOn" /> Audio on</label></div>
-      <div class="setting-row"><label><input type="radio" name="mode" id="modeRandomCategory" checked /> Random from each active category</label><label><input type="radio" name="mode" id="modeAlphabeticCategory" /> Alphabetic from each active category</label><label><input type="radio" name="mode" id="modeReverseCategory" /> Reverse alphabetic from each active category</label></div>
-      <div class="setting-row"><label><input type="radio" name="mode" id="modeRandomOne" /> Random inside first active category</label><label><input type="radio" name="mode" id="modeAlphabeticOne" /> Alphabetic inside first active category</label><label><input type="radio" name="mode" id="modeReverseOne" /> Reverse inside first active category</label></div>
-      <div><div class="hint">Speed in seconds. Tap a box to highlight it. Manual box: click number, type new number, press Enter.</div><div class="speed-grid" id="speedGrid"><button class="speed-btn" data-speed="3">3</button><button class="speed-btn active" data-speed="5">5</button><button class="speed-btn" data-speed="10">10</button><button class="speed-btn" data-speed="20">20</button><button class="speed-btn" data-speed="30">30</button></div></div>
-      <div class="custom-speed"><input id="customSpeed" type="number" min="1" max="999" value="5" /><button class="small-btn" id="decreaseSpeed">-1</button><button class="small-btn" id="increaseSpeed">+1</button></div>
+      <div class="page-nav">
+        <button class="small-btn active" id="settingsPageBtn">Main</button>
+        <button class="small-btn" id="categoryPageBtn">Categories</button>
+        <button class="small-btn" id="colorsPageBtn">Colors</button>
+      </div>
+
+      <div class="setting-row">
+        <label><input type="checkbox" id="audioOn" /> Audio on</label>
+        <label><input type="checkbox" id="toggleHindi" checked /> Hindi on</label>
+      </div>
+
+      <div class="setting-row">
+        <label><input type="radio" name="mode" id="modeRandomCategory" checked /> Random from each active category</label>
+        <label><input type="radio" name="mode" id="modeAlphabeticCategory" /> Alphabetic from each active category</label>
+        <label><input type="radio" name="mode" id="modeReverseCategory" /> Reverse alphabetic from each active category</label>
+      </div>
+
+      <div class="setting-row">
+        <label><input type="radio" name="mode" id="modeRandomOne" /> Random inside active category/list</label>
+        <label><input type="radio" name="mode" id="modeAlphabeticOne" /> Alphabetic inside active category/list</label>
+        <label><input type="radio" name="mode" id="modeReverseOne" /> Reverse inside active category/list</label>
+      </div>
+
+      <div>
+        <div class="hint">Speed in seconds. Tap a box to highlight it. Manual box: click number, type new number, press Enter.</div>
+        <div class="speed-grid" id="speedGrid">
+          <button class="speed-btn" data-speed="3">3</button>
+          <button class="speed-btn active" data-speed="5">5</button>
+          <button class="speed-btn" data-speed="10">10</button>
+          <button class="speed-btn" data-speed="20">20</button>
+          <button class="speed-btn" data-speed="30">30</button>
+        </div>
+      </div>
+
+      <div class="custom-speed">
+        <input id="customSpeed" type="number" min="1" max="999" value="5" />
+        <button class="small-btn" id="decreaseSpeed">-1</button>
+        <button class="small-btn" id="increaseSpeed">+1</button>
+      </div>
+
       <div class="hint">Tap prompt: left = previous, middle = play/pause, right = next. Swipe left/right on prompt for previous/next. Swipe left/right here to change option page.</div>
     </section>
 
-    <section class="page hidden" id="categoryPage"><div class="page-nav"><button class="small-btn" id="settingsPageBtn2">Main</button><button class="small-btn active" id="categoryPageBtn2">Categories</button><button class="small-btn" id="colorsPageBtn2">Colors</button></div><div class="hint">Choose active categories. Change numbers to choose the sequence. Use only one category if you want to drill that list alone.</div><div class="category-list" id="categoryList"></div></section>
-    <section class="page hidden" id="colorsPage"><div class="page-nav"><button class="small-btn" id="settingsPageBtn3">Main</button><button class="small-btn" id="categoryPageBtn3">Categories</button><button class="small-btn active" id="colorsPageBtn3">Colors</button></div><div class="hint">Category colors.</div><div class="category-list" id="colorList"></div></section>
+    <section class="page hidden" id="categoryPage">
+      <div class="page-nav">
+        <button class="small-btn" id="settingsPageBtn2">Main</button>
+        <button class="small-btn active" id="categoryPageBtn2">Categories</button>
+        <button class="small-btn" id="colorsPageBtn2">Colors</button>
+      </div>
+      <div class="hint">Choose active categories. Change numbers to choose the sequence. Use only one category if you want to drill that list alone.</div>
+      <div class="category-list" id="categoryList"></div>
+    </section>
 
-    <section class="prompt-area" id="promptArea"><div class="tap-zone tap-left" id="tapLeft"></div><div class="tap-zone tap-middle" id="tapMiddle"></div><div class="tap-zone tap-right" id="tapRight"></div><div class="verb" id="verbText">Persuade</div><div class="category" id="categoryText">(1 Influence)</div><div class="tap-label">left prev Â· middle play/pause Â· right next</div><div class="counter" id="counterText">1 / 148</div></section>
-    <section class="controls"><button class="control-btn" id="playPauseBtn">Play</button><button class="control-btn" id="resetBtn">Reset</button><button class="control-btn" id="prevBtn">Prev</button><button class="control-btn" id="nextBtn">Next</button><button class="control-btn" id="fullBtn">Full</button></section>
+    <section class="page hidden" id="colorsPage">
+      <div class="page-nav">
+        <button class="small-btn" id="settingsPageBtn3">Main</button>
+        <button class="small-btn" id="categoryPageBtn3">Categories</button>
+        <button class="small-btn active" id="colorsPageBtn3">Colors</button>
+      </div>
+      <div class="hint">Category colors.</div>
+      <div class="category-list" id="colorList"></div>
+    </section>
+
+    <section class="prompt-area" id="promptArea">
+      <div class="tap-zone tap-left" id="tapLeft"></div>
+      <div class="tap-zone tap-middle" id="tapMiddle"></div>
+      <div class="tap-zone tap-right" id="tapRight"></div>
+
+      <div class="verb" id="verbText">Persuade</div>
+      <div class="hindi-line" id="hindiText">(Manana)</div>
+      <div class="category" id="categoryText">(1 Influence)</div>
+
+      <div class="tap-label">left prev Â· middle play/pause Â· right next</div>
+      <div class="counter" id="counterText">1 / 148</div>
+    </section>
+
+    <section class="controls" id="controls">
+      <button class="control-btn" id="playPauseBtn">Play</button>
+      <button class="control-btn" id="resetBtn">Reset</button>
+      <button class="control-btn" id="prevBtn">Prev</button>
+      <button class="control-btn" id="nextBtn">Next</button>
+      <button class="control-btn" id="fullBtn">Full</button>
+    </section>
   </main>
 
   <script>
@@ -194,53 +602,502 @@ Challenge - (Tactics)
 Confront - (Tactics)
 Support - (Tactics)
 `;
-    const categoryInfo={Influence:{number:1,color:'#38bdf8',active:true},Power:{number:2,color:'#f97316',active:true},Vulnerability:{number:3,color:'#f0abfc',active:true},Connection:{number:4,color:'#34d399',active:true},Conflict:{number:5,color:'#ef4444',active:true},Distance:{number:6,color:'#94a3b8',active:true},Romance:{number:7,color:'#fb7185',active:true},Tactics:{number:8,color:'#c084fc',active:true},Care:{number:9,color:'#22c55e',active:true},Comedy:{number:10,color:'#2dd4bf',active:true},Status:{number:11,color:'#facc15',active:true},Discovery:{number:12,color:'#a78bfa',active:true}};
-    function titleCase(t){return t.toLowerCase().split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ')}
-    const prompts=rawPrompts.trim().split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{const m=l.match(/^(.+?)\s-\s\((.+?)\)$/);return{verb:titleCase(m[1].trim()),category:titleCase(m[2].trim())}});
-    const byCategory=prompts.reduce((a,i)=>{(a[i.category]??=[]).push(i);return a},{});Object.keys(byCategory).forEach(c=>byCategory[c].sort((a,b)=>a.verb.localeCompare(b.verb)));
-    let categoryStepIndex=0,currentIndex=0,history=[],historyPosition=-1,timer=null,speedSeconds=5,isRunning=false,forwardIndexByCategory={},reverseIndexByCategory={},oneCategoryIndex=0,oneCategoryReverseIndex=0,touchStartX=0,touchStartY=0,pageTouchStartX=0,pageTouchStartY=0;
-    const $=id=>document.getElementById(id),verbText=$('verbText'),categoryText=$('categoryText'),counterText=$('counterText'),promptArea=$('promptArea'),audioOn=$('audioOn'),settingsPage=$('settingsPage'),categoryPage=$('categoryPage'),colorsPage=$('colorsPage'),categoryList=$('categoryList'),colorList=$('colorList'),playPauseBtn=$('playPauseBtn'),customSpeed=$('customSpeed');
-    setTimeout(()=>$('versionText').classList.add('fade'),5000);
-    function getCategoryOrder(){return Object.keys(categoryInfo).sort((a,b)=>categoryInfo[a].number-categoryInfo[b].number)}
-    function getActiveCategories(){const a=getCategoryOrder().filter(c=>categoryInfo[c].active&&byCategory[c]);return a.length?a:[getCategoryOrder()[0]]}
-    function getMode(){if($('modeAlphabeticCategory').checked)return'alphaCategory';if($('modeReverseCategory').checked)return'reverseCategory';if($('modeRandomOne').checked)return'randomOne';if($('modeAlphabeticOne').checked)return'alphaOne';if($('modeReverseOne').checked)return'reverseOne';return'randomCategory'}
-    function firstActiveCategory(){return getActiveCategories()[0]}
-    function resetCategoryWordIndexes(){forwardIndexByCategory={};reverseIndexByCategory={};Object.keys(byCategory).forEach(c=>{forwardIndexByCategory[c]=0;reverseIndexByCategory[c]=byCategory[c].length-1});oneCategoryIndex=0;const f=firstActiveCategory();oneCategoryReverseIndex=f?byCategory[f].length-1:0}
-    function renderCategoryList(){categoryList.innerHTML=getCategoryOrder().map(c=>{const i=categoryInfo[c];return `<div class="category-card ${i.active?'':'off'}" data-category="${c}"><input type="checkbox" class="cat-active" ${i.active?'checked':''}/><span style="color:${i.color}">${i.number} ${c}</span><input class="seq-input" type="number" min="1" max="99" value="${i.number}"/><button class="tiny-btn move-up">â†‘</button><button class="tiny-btn move-down">â†“</button></div>`}).join('')}
-    function renderColorList(){colorList.innerHTML=getCategoryOrder().map(c=>{const i=categoryInfo[c];return `<div class="color-row"><span class="dot" style="background:${i.color}"></span><span style="color:${i.color}">${i.number} ${c} ${i.color}</span></div>`}).join('')}
-    function refreshCategoryPages(){renderCategoryList();renderColorList()}
-    function showPage(n){settingsPage.classList.add('hidden');categoryPage.classList.add('hidden');colorsPage.classList.add('hidden');if(n==='category')categoryPage.classList.remove('hidden');else if(n==='colors')colorsPage.classList.remove('hidden');else settingsPage.classList.remove('hidden')}
-    function nextPage(){if(!settingsPage.classList.contains('hidden'))showPage('category');else if(!categoryPage.classList.contains('hidden'))showPage('colors');else showPage('main')}
-    function prevPage(){if(!settingsPage.classList.contains('hidden'))showPage('colors');else if(!categoryPage.classList.contains('hidden'))showPage('main');else showPage('category')}
-    function speak(item){if(!audioOn.checked||!('speechSynthesis'in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(`${item.verb}.`);u.lang='en-US';u.rate=.95;window.speechSynthesis.speak(u)}
-    function showItem(item,add=true){const gi=prompts.findIndex(p=>p.verb===item.verb&&p.category===item.category);currentIndex=gi>=0?gi:currentIndex;const info=categoryInfo[item.category]||{number:0,color:'#fff'};verbText.textContent=item.verb;categoryText.textContent=`(${info.number} ${item.category})`;verbText.style.color=info.color;categoryText.style.color=info.color;counterText.textContent=`${currentIndex+1} / ${prompts.length}`;promptArea.style.boxShadow=`0 0 0 2px ${info.color}44 inset`;verbText.style.transform='scale(1.03)';setTimeout(()=>verbText.style.transform='scale(1)',140);if(add){history=history.slice(0,historyPosition+1);history.push(item);historyPosition=history.length-1} speak(item)}
-    function nextCategoryInSequence(){const a=getActiveCategories();const c=a[categoryStepIndex%a.length];categoryStepIndex++;return c}
-    function randomFrom(c){const l=byCategory[c];return l[Math.floor(Math.random()*l.length)]}
-    function alphaFrom(c){const l=byCategory[c],it=l[forwardIndexByCategory[c]%l.length];forwardIndexByCategory[c]++;return it}
-    function reverseFrom(c){const l=byCategory[c];let idx=reverseIndexByCategory[c];if(idx<0)idx=l.length-1;const it=l[idx];reverseIndexByCategory[c]=idx-1;return it}
-    function nextItemByMode(){const m=getMode();if(m==='alphaCategory')return alphaFrom(nextCategoryInSequence());if(m==='reverseCategory')return reverseFrom(nextCategoryInSequence());if(m==='randomOne')return randomFrom(firstActiveCategory());if(m==='alphaOne'){const c=firstActiveCategory(),l=byCategory[c],it=l[oneCategoryIndex%l.length];oneCategoryIndex++;return it}if(m==='reverseOne'){const c=firstActiveCategory(),l=byCategory[c];if(oneCategoryReverseIndex<0||oneCategoryReverseIndex>=l.length)oneCategoryReverseIndex=l.length-1;const it=l[oneCategoryReverseIndex];oneCategoryReverseIndex--;return it}return randomFrom(nextCategoryInSequence())}
-    function next(){showItem(nextItemByMode())}
-    function prev(){if(historyPosition>0){historyPosition--;showItem(history[historyPosition],false)}else{currentIndex=(currentIndex-1+prompts.length)%prompts.length;showItem(prompts[currentIndex])}}
-    function start(){pause(false);isRunning=true;playPauseBtn.textContent='Pause';playPauseBtn.classList.add('active');timer=setInterval(next,speedSeconds*1000)}
-    function pause(update=true){isRunning=false;if(update){playPauseBtn.textContent='Play';playPauseBtn.classList.remove('active')}if(timer)clearInterval(timer);timer=null}
-    function togglePlayPause(){isRunning?pause():start()}
-    function reset(){pause();currentIndex=0;categoryStepIndex=0;history=[];historyPosition=-1;resetCategoryWordIndexes();showItem(byCategory[firstActiveCategory()]?.[0]||prompts[0])}
-    function setSpeed(s,btn=null){speedSeconds=Math.max(1,Number(s)||5);customSpeed.value=speedSeconds;document.querySelectorAll('.speed-btn').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');if(isRunning)start()}
-    function enterFullscreen(){const e=document.documentElement;if(e.requestFullscreen)e.requestFullscreen();document.body.classList.add('fullscreen')}
-    function exitFullscreenCleanup(){if(!document.fullscreenElement)document.body.classList.remove('fullscreen')}
-    function pageSwipeStart(e){pageTouchStartX=e.changedTouches[0].screenX;pageTouchStartY=e.changedTouches[0].screenY}
-    function pageSwipeEnd(e){const dx=e.changedTouches[0].screenX-pageTouchStartX,dy=e.changedTouches[0].screenY-pageTouchStartY;if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>45){dx<0?nextPage():prevPage()}}
-    $('tapLeft').addEventListener('click',e=>{e.stopPropagation();prev()});$('tapMiddle').addEventListener('click',e=>{e.stopPropagation();togglePlayPause()});$('tapRight').addEventListener('click',e=>{e.stopPropagation();next()});
-    playPauseBtn.addEventListener('click',togglePlayPause);$('resetBtn').addEventListener('click',reset);$('nextBtn').addEventListener('click',next);$('prevBtn').addEventListener('click',prev);$('fullBtn').addEventListener('click',enterFullscreen);
-    [['settingsPageBtn','main'],['categoryPageBtn','category'],['colorsPageBtn','colors'],['settingsPageBtn2','main'],['categoryPageBtn2','category'],['colorsPageBtn2','colors'],['settingsPageBtn3','main'],['categoryPageBtn3','category'],['colorsPageBtn3','colors']].forEach(([id,p])=>$(id).addEventListener('click',()=>showPage(p)));
-    $('settingsToggle').addEventListener('click',()=>{const hidden=settingsPage.classList.contains('hidden')&&categoryPage.classList.contains('hidden')&&colorsPage.classList.contains('hidden');if(hidden)showPage('main');else{settingsPage.classList.add('hidden');categoryPage.classList.add('hidden');colorsPage.classList.add('hidden')}});
-    $('speedGrid').addEventListener('click',e=>{const b=e.target.closest('.speed-btn');if(b)setSpeed(b.dataset.speed,b)});customSpeed.addEventListener('focus',()=>customSpeed.select());customSpeed.addEventListener('click',()=>customSpeed.select());customSpeed.addEventListener('keydown',e=>{if(e.key==='Enter'){setSpeed(customSpeed.value);customSpeed.blur()}});$('decreaseSpeed').addEventListener('click',()=>setSpeed(speedSeconds-1));$('increaseSpeed').addEventListener('click',()=>setSpeed(speedSeconds+1));
-    categoryList.addEventListener('change',e=>{const card=e.target.closest('.category-card');if(!card)return;const c=card.dataset.category;if(e.target.classList.contains('cat-active'))categoryInfo[c].active=e.target.checked;if(e.target.classList.contains('seq-input'))categoryInfo[c].number=Math.max(1,Number(e.target.value)||categoryInfo[c].number);categoryStepIndex=0;resetCategoryWordIndexes();refreshCategoryPages()});
-    categoryList.addEventListener('click',e=>{const card=e.target.closest('.category-card');if(!card)return;const c=card.dataset.category;if(e.target.classList.contains('move-up'))categoryInfo[c].number=Math.max(1,categoryInfo[c].number-1);if(e.target.classList.contains('move-down'))categoryInfo[c].number++;if(e.target.classList.contains('move-up')||e.target.classList.contains('move-down')){categoryStepIndex=0;resetCategoryWordIndexes();refreshCategoryPages()}});
-    document.querySelectorAll('input[name="mode"]').forEach(r=>r.addEventListener('change',()=>{categoryStepIndex=0;resetCategoryWordIndexes()}));
-    promptArea.addEventListener('touchstart',e=>{touchStartX=e.changedTouches[0].screenX;touchStartY=e.changedTouches[0].screenY},{passive:true});promptArea.addEventListener('touchend',e=>{const dx=e.changedTouches[0].screenX-touchStartX,dy=e.changedTouches[0].screenY-touchStartY;if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>45){dx<0?next():prev()}},{passive:true});
-    [settingsPage,categoryPage,colorsPage].forEach(p=>{p.addEventListener('touchstart',pageSwipeStart,{passive:true});p.addEventListener('touchend',pageSwipeEnd,{passive:true})});document.addEventListener('fullscreenchange',exitFullscreenCleanup);document.addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();togglePlayPause()}if(e.key==='ArrowRight')next();if(e.key==='ArrowLeft')prev();if(e.key.toLowerCase()==='f')enterFullscreen()});
-    resetCategoryWordIndexes();refreshCategoryPages();showItem(prompts[0]);
+
+    const hindiTranslations = {
+      "Persuade": "Manana", "Convince": "Vishvaas Dilana", "Influence": "Prabhaavit Karna",
+      "Inspire": "Prerit Karna", "Motivate": "Utsaahit Karna", "Encourage": "Hausla Dena",
+      "Recruit": "Bharti Karna", "Convert": "Badalna", "Educate": "Shikshit Karna",
+      "Teach": "Sikhana", "Sell": "Bechna", "Pitch": "Prastaav Dena",
+      "Negotiate": "Mol-bhaav Karna", "Bargain": "Sauda Karna", "Sway": "Jhukana",
+      "Comfort": "Aaraam Dena", "Reassure": "Aashvaasan Dena", "Support": "Sahaara Dena",
+      "Nurture": "Paalna", "Cherish": "Sanjo Kar Rakhna", "Admire": "Prashansa Karna",
+      "Appreciate": "Sarahana", "Welcome": "Svaagat Karna", "Embrace": "Gale Lagana",
+      "Include": "Shaamil Karna", "Befriend": "Dosti Karna", "Praise": "Tareef Karna",
+      "Thank": "Dhanyavaad Dena", "Celebrate": "Jashn Manana", "Flirt": "Chhedna",
+      "Seduce": "Lubhana", "Charm": "Mohit Karna", "Attract": "Aakarshit Karna",
+      "Entice": "Lalchaana", "Captivate": "Man Moh Lena", "Impress": "Prabhaavit Karna",
+      "Enchant": "Mugdh Karna", "Adore": "Pyaar Karna", "Woo": "Rijhana",
+      "Tempt": "Lalchaana", "Fascinate": "Mohit Karna", "Compliment": "Tareef Karna",
+      "Invite": "Nimantran Dena", "Excite": "Uttejit Karna", "Command": "Aadesh Dena",
+      "Control": "Niyantrit Karna", "Dominate": "Haavi Hona", "Intimidate": "Daraana",
+      "Threaten": "Dhamkana", "Pressure": "Dabaav Dena", "Challenge": "Chunauti Dena",
+      "Confront": "Saamna Karna", "Overpower": "Paraast Karna", "Corner": "Gherna",
+      "Demand": "Maang Karna", "Punish": "Saza Dena", "Discipline": "Anushaasit Karna",
+      "Humiliate": "Apamaanit Karna", "Crush": "Kuchalna", "Accuse": "Aarop Lagana",
+      "Blame": "Dosh Dena", "Criticize": "Aalochana Karna", "Insult": "Apamaan Karna",
+      "Mock": "Mazaak Udaana", "Provoke": "Uksaana", "Expose": "Ujaagar Karna",
+      "Shame": "Sharminda Karna", "Attack": "Hamla Karna", "Reject": "Thukrana",
+      "Dismiss": "Khaarij Karna", "Sabotage": "Nuksaan Pahunchana",
+      "Undermine": "Kamzor Karna", "Interrogate": "Poochtaach Karna", "Trap": "Phansaana",
+      "Protect": "Raksha Karna", "Defend": "Bachaav Karna", "Shield": "Dhaal Banana",
+      "Rescue": "Bachaana", "Save": "Bachaana", "Guide": "Maargdarshan Karna",
+      "Advise": "Salaah Dena", "Mentor": "Maargdarshak Banna", "Assist": "Sahaayata Karna",
+      "Serve": "Seva Karna", "Help": "Madad Karna", "Guard": "Pehra Dena",
+      "Heal": "Changa Karna", "Investigate": "Jaanch Karna", "Question": "Sawaal Karna",
+      "Examine": "Parakhna", "Probe": "Gehraai Se Jaanchna", "Discover": "Khojna",
+      "Uncover": "Parda Hataana", "Reveal": "Prakat Karna", "Explore": "Khoj Karna",
+      "Test": "Pariksha Karna", "Analyze": "Vishleshan Karna", "Inspect": "Nirikshan Karna",
+      "Learn": "Seekhna", "Understand": "Samajhna", "Clarify": "Spasht Karna",
+      "Verify": "Satyaapit Karna", "Dazzle": "Chakachaundh Karna", "Amaze": "Chakit Karna",
+      "Astonish": "Hairaan Karna", "Entertain": "Manoranjan Karna", "Delight": "Prasann Karna",
+      "Demonstrate": "Dikhana", "Prove": "Saabit Karna", "Establish": "Sthaapit Karna",
+      "Distinguish": "Alag Pehchaan Dena", "Show Off": "Dikhaava Karna",
+      "Avoid": "Bachna", "Escape": "Bhaag Nikalna", "Exclude": "Baahar Rakhna",
+      "Isolate": "Alag Karna", "Ignore": "Nazarandaaz Karna", "Evade": "Kataraana",
+      "Abandon": "Chhod Dena", "Detach": "Alag Hona", "Withdraw": "Peechhe Hatna",
+      "Hide": "Chhupna", "Disappear": "Gaayab Hona", "Resist": "Virodh Karna",
+      "Refuse": "Mana Karna", "Confess": "Svikaar Karna", "Apologize": "Maafi Maangna",
+      "Plead": "Vinati Karna", "Beg": "Bheekh Maangna", "Ask": "Poochna",
+      "Seek": "Khojna", "Request": "Anurodh Karna", "Trust": "Bharosa Karna",
+      "Surrender": "Samarpan Karna", "Admit": "Maan Lena", "Open Up": "Khulna",
+      "Connect": "Judna", "Share": "Baantna", "Tease": "Chhedna", "Confuse": "Uljhana",
+      "Surprise": "Chonkaana", "Shock": "Jhatka Dena", "Distract": "Dhyaan Bhatkaana",
+      "Exaggerate": "Badhachadha Kar Kehna", "Parody": "Nakal Karna",
+      "Imitate": "Anukaran Karna", "Mislead": "Gumraah Karna", "Trick": "Chaal Chalna",
+      "Ridicule": "Upahaas Karna", "Play": "Khelna", "Amuse": "Hansaana",
+      "Manipulate": "Hera-pheri Karna", "Validate": "Maanyata Dena",
+      "Empower": "Sashakt Karna", "Calm": "Shaant Karna"
+    };
+
+    const categoryInfo = {
+      Influence: { number: 1, color: '#38bdf8', active: true },
+      Power: { number: 2, color: '#f97316', active: true },
+      Vulnerability: { number: 3, color: '#f0abfc', active: true },
+      Connection: { number: 4, color: '#34d399', active: true },
+      Conflict: { number: 5, color: '#ef4444', active: true },
+      Distance: { number: 6, color: '#94a3b8', active: true },
+      Romance: { number: 7, color: '#fb7185', active: true },
+      Tactics: { number: 8, color: '#c084fc', active: true },
+      Care: { number: 9, color: '#22c55e', active: true },
+      Comedy: { number: 10, color: '#2dd4bf', active: true },
+      Status: { number: 11, color: '#facc15', active: true },
+      Discovery: { number: 12, color: '#a78bfa', active: true }
+    };
+
+    function titleCase(text) {
+      return text.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    }
+
+    const prompts = rawPrompts.trim().split('\n').map(line => line.trim()).filter(Boolean).map(line => {
+      const match = line.match(/^(.+?)\s-\s\((.+?)\)$/);
+      return { verb: titleCase(match[1].trim()), category: titleCase(match[2].trim()) };
+    });
+
+    const byCategory = prompts.reduce((acc, item) => {
+      if (!acc[item.category]) acc[item.category] = [];
+      acc[item.category].push(item);
+      return acc;
+    }, {});
+
+    Object.keys(byCategory).forEach(cat => byCategory[cat].sort((a, b) => a.verb.localeCompare(b.verb)));
+
+    let categoryStepIndex = 0;
+    let currentIndex = 0;
+    let history = [];
+    let historyPosition = -1;
+    let timer = null;
+    let speedSeconds = 5;
+    let isRunning = false;
+    let forwardIndexByCategory = {};
+    let reverseIndexByCategory = {};
+    let oneCategoryIndex = 0;
+    let oneCategoryReverseIndex = 0;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let pageTouchStartX = 0;
+    let pageTouchStartY = 0;
+
+    const verbText = document.getElementById('verbText');
+    const hindiText = document.getElementById('hindiText');
+    const categoryText = document.getElementById('categoryText');
+    const counterText = document.getElementById('counterText');
+    const promptArea = document.getElementById('promptArea');
+    const audioOn = document.getElementById('audioOn');
+    const toggleHindi = document.getElementById('toggleHindi');
+    const settingsPage = document.getElementById('settingsPage');
+    const categoryPage = document.getElementById('categoryPage');
+    const colorsPage = document.getElementById('colorsPage');
+    const settingsToggle = document.getElementById('settingsToggle');
+    const categoryList = document.getElementById('categoryList');
+    const colorList = document.getElementById('colorList');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const customSpeed = document.getElementById('customSpeed');
+
+    setTimeout(() => document.getElementById('versionText').classList.add('fade'), 5000);
+
+    function resetCategoryWordIndexes() {
+      forwardIndexByCategory = {};
+      reverseIndexByCategory = {};
+      Object.keys(byCategory).forEach(cat => {
+        forwardIndexByCategory[cat] = 0;
+        reverseIndexByCategory[cat] = byCategory[cat].length - 1;
+      });
+      oneCategoryIndex = 0;
+      const first = getActiveCategories()[0];
+      oneCategoryReverseIndex = first ? byCategory[first].length - 1 : 0;
+    }
+
+    function getCategoryOrder() {
+      return Object.keys(categoryInfo).sort((a, b) => categoryInfo[a].number - categoryInfo[b].number);
+    }
+
+    function getActiveCategories() {
+      return getCategoryOrder().filter(cat => categoryInfo[cat].active && byCategory[cat]);
+    }
+
+    function getMode() {
+      if (document.getElementById('modeAlphabeticCategory').checked) return 'alphaCategory';
+      if (document.getElementById('modeReverseCategory').checked) return 'reverseCategory';
+      if (document.getElementById('modeRandomOne').checked) return 'randomOne';
+      if (document.getElementById('modeAlphabeticOne').checked) return 'alphaOne';
+      if (document.getElementById('modeReverseOne').checked) return 'reverseOne';
+      return 'randomCategory';
+    }
+
+    function firstActiveCategory() {
+      const active = getActiveCategories();
+      return active.length ? active[0] : getCategoryOrder()[0];
+    }
+
+    function renderCategoryList() {
+      categoryList.innerHTML = getCategoryOrder().map(cat => {
+        const info = categoryInfo[cat];
+        return `
+          <div class="category-card ${info.active ? '' : 'off'}" data-category="${cat}">
+            <input type="checkbox" class="cat-active" ${info.active ? 'checked' : ''} />
+            <span style="color:${info.color}">${info.number} ${cat}</span>
+            <input class="seq-input" type="number" min="1" max="99" value="${info.number}" />
+            <button class="tiny-btn move-up">â†‘</button>
+            <button class="tiny-btn move-down">â†“</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderColorList() {
+      colorList.innerHTML = getCategoryOrder().map(cat => {
+        const info = categoryInfo[cat];
+        return `
+          <div class="color-row">
+            <span class="dot" style="background:${info.color}"></span>
+            <span style="color:${info.color}">${info.number} ${cat} ${info.color}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function refreshCategoryPages() {
+      renderCategoryList();
+      renderColorList();
+    }
+
+    function showPage(pageName) {
+      settingsPage.classList.add('hidden');
+      categoryPage.classList.add('hidden');
+      colorsPage.classList.add('hidden');
+      if (pageName === 'category') categoryPage.classList.remove('hidden');
+      else if (pageName === 'colors') colorsPage.classList.remove('hidden');
+      else settingsPage.classList.remove('hidden');
+    }
+
+    function nextPage() {
+      if (!settingsPage.classList.contains('hidden')) showPage('category');
+      else if (!categoryPage.classList.contains('hidden')) showPage('colors');
+      else showPage('main');
+    }
+
+    function prevPage() {
+      if (!settingsPage.classList.contains('hidden')) showPage('colors');
+      else if (!categoryPage.classList.contains('hidden')) showPage('main');
+      else showPage('category');
+    }
+
+    function speak(item) {
+      if (!audioOn.checked || !('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(`${item.verb}.`);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.95;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function showItem(item, addToHistory = true) {
+      const globalIndex = prompts.findIndex(p => p.verb === item.verb && p.category === item.category);
+      currentIndex = globalIndex >= 0 ? globalIndex : currentIndex;
+      const info = categoryInfo[item.category] || { number: 0, color: '#ffffff' };
+
+      verbText.textContent = item.verb;
+      hindiText.textContent = `(${hindiTranslations[item.verb] || item.verb})`;
+      hindiText.classList.toggle('hide-hindi', !toggleHindi.checked);
+      categoryText.textContent = `(${info.number} ${item.category})`;
+
+      verbText.style.color = info.color;
+      hindiText.style.color = info.color;
+      categoryText.style.color = info.color;
+      counterText.textContent = `${currentIndex + 1} / ${prompts.length}`;
+      promptArea.style.boxShadow = `0 0 0 2px ${info.color}44 inset`;
+
+      verbText.style.transform = 'scale(1.03)';
+      setTimeout(() => verbText.style.transform = 'scale(1)', 140);
+
+      if (addToHistory) {
+        history = history.slice(0, historyPosition + 1);
+        history.push(item);
+        historyPosition = history.length - 1;
+      }
+
+      speak(item);
+    }
+
+    function nextCategoryInSequence() {
+      const active = getActiveCategories();
+      if (!active.length) return getCategoryOrder()[0];
+      const cat = active[categoryStepIndex % active.length];
+      categoryStepIndex++;
+      return cat;
+    }
+
+    function getRandomFromCategory(cat) {
+      const list = byCategory[cat];
+      return list[Math.floor(Math.random() * list.length)];
+    }
+
+    function getAlphabeticFromCategory(cat) {
+      const list = byCategory[cat];
+      const item = list[forwardIndexByCategory[cat] % list.length];
+      forwardIndexByCategory[cat]++;
+      return item;
+    }
+
+    function getReverseFromCategory(cat) {
+      const list = byCategory[cat];
+      let idx = reverseIndexByCategory[cat];
+      if (idx < 0) idx = list.length - 1;
+      const item = list[idx];
+      reverseIndexByCategory[cat] = idx - 1;
+      return item;
+    }
+
+    function getOneCategoryList() {
+      const cat = firstActiveCategory();
+      return { cat, list: byCategory[cat] };
+    }
+
+    function nextItemByMode() {
+      const mode = getMode();
+      if (mode === 'alphaCategory') return getAlphabeticFromCategory(nextCategoryInSequence());
+      if (mode === 'reverseCategory') return getReverseFromCategory(nextCategoryInSequence());
+      if (mode === 'randomOne') return getRandomFromCategory(getOneCategoryList().cat);
+
+      if (mode === 'alphaOne') {
+        const { list } = getOneCategoryList();
+        const item = list[oneCategoryIndex % list.length];
+        oneCategoryIndex++;
+        return item;
+      }
+
+      if (mode === 'reverseOne') {
+        const { list } = getOneCategoryList();
+        if (oneCategoryReverseIndex < 0 || oneCategoryReverseIndex >= list.length) oneCategoryReverseIndex = list.length - 1;
+        const item = list[oneCategoryReverseIndex];
+        oneCategoryReverseIndex--;
+        return item;
+      }
+
+      return getRandomFromCategory(nextCategoryInSequence());
+    }
+
+    function next() { showItem(nextItemByMode()); }
+
+    function prev() {
+      if (historyPosition > 0) {
+        historyPosition--;
+        showItem(history[historyPosition], false);
+      } else {
+        currentIndex = (currentIndex - 1 + prompts.length) % prompts.length;
+        showItem(prompts[currentIndex]);
+      }
+    }
+
+    function start() {
+      pause(false);
+      isRunning = true;
+      playPauseBtn.textContent = 'Pause';
+      playPauseBtn.classList.add('active');
+      timer = setInterval(next, speedSeconds * 1000);
+    }
+
+    function pause(updateButton = true) {
+      isRunning = false;
+      if (updateButton) {
+        playPauseBtn.textContent = 'Play';
+        playPauseBtn.classList.remove('active');
+      }
+      if (timer) clearInterval(timer);
+      timer = null;
+    }
+
+    function togglePlayPause() { isRunning ? pause() : start(); }
+
+    function reset() {
+      pause();
+      currentIndex = 0;
+      categoryStepIndex = 0;
+      history = [];
+      historyPosition = -1;
+      resetCategoryWordIndexes();
+      const firstCat = firstActiveCategory();
+      const firstItem = byCategory[firstCat] ? byCategory[firstCat][0] : prompts[0];
+      showItem(firstItem);
+    }
+
+    function restartTimerIfRunning() { if (isRunning) start(); }
+
+    function setSpeed(seconds, clickedButton = null) {
+      speedSeconds = Math.max(1, Number(seconds) || 5);
+      customSpeed.value = speedSeconds;
+      document.querySelectorAll('.speed-btn').forEach(btn => btn.classList.remove('active'));
+      if (clickedButton) clickedButton.classList.add('active');
+      restartTimerIfRunning();
+    }
+
+    function changeSpeed(delta) { setSpeed(speedSeconds + delta); }
+
+    function enterFullscreen() {
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) elem.requestFullscreen();
+      document.body.classList.add('fullscreen');
+    }
+
+    function exitFullscreenCleanup() {
+      if (!document.fullscreenElement) document.body.classList.remove('fullscreen');
+    }
+
+    function pageSwipeStart(event) {
+      pageTouchStartX = event.changedTouches[0].screenX;
+      pageTouchStartY = event.changedTouches[0].screenY;
+    }
+
+    function pageSwipeEnd(event) {
+      const dx = event.changedTouches[0].screenX - pageTouchStartX;
+      const dy = event.changedTouches[0].screenY - pageTouchStartY;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 45) dx < 0 ? nextPage() : prevPage();
+    }
+
+    document.getElementById('tapLeft').addEventListener('click', event => { event.stopPropagation(); prev(); });
+    document.getElementById('tapMiddle').addEventListener('click', event => { event.stopPropagation(); togglePlayPause(); });
+    document.getElementById('tapRight').addEventListener('click', event => { event.stopPropagation(); next(); });
+
+    playPauseBtn.addEventListener('click', togglePlayPause);
+    document.getElementById('resetBtn').addEventListener('click', reset);
+    document.getElementById('nextBtn').addEventListener('click', next);
+    document.getElementById('prevBtn').addEventListener('click', prev);
+    document.getElementById('fullBtn').addEventListener('click', enterFullscreen);
+
+    document.getElementById('settingsPageBtn').addEventListener('click', () => showPage('main'));
+    document.getElementById('categoryPageBtn').addEventListener('click', () => showPage('category'));
+    document.getElementById('colorsPageBtn').addEventListener('click', () => showPage('colors'));
+    document.getElementById('settingsPageBtn2').addEventListener('click', () => showPage('main'));
+    document.getElementById('categoryPageBtn2').addEventListener('click', () => showPage('category'));
+    document.getElementById('colorsPageBtn2').addEventListener('click', () => showPage('colors'));
+    document.getElementById('settingsPageBtn3').addEventListener('click', () => showPage('main'));
+    document.getElementById('categoryPageBtn3').addEventListener('click', () => showPage('category'));
+    document.getElementById('colorsPageBtn3').addEventListener('click', () => showPage('colors'));
+
+    settingsToggle.addEventListener('click', () => {
+      const allHidden = settingsPage.classList.contains('hidden') && categoryPage.classList.contains('hidden') && colorsPage.classList.contains('hidden');
+      if (allHidden) showPage('main');
+      else {
+        settingsPage.classList.add('hidden');
+        categoryPage.classList.add('hidden');
+        colorsPage.classList.add('hidden');
+      }
+    });
+
+    toggleHindi.addEventListener('change', () => {
+      hindiText.classList.toggle('hide-hindi', !toggleHindi.checked);
+    });
+
+    document.getElementById('speedGrid').addEventListener('click', event => {
+      const btn = event.target.closest('.speed-btn');
+      if (!btn) return;
+      setSpeed(btn.dataset.speed, btn);
+    });
+
+    customSpeed.addEventListener('focus', () => customSpeed.select());
+    customSpeed.addEventListener('click', () => customSpeed.select());
+    customSpeed.addEventListener('keydown', event => {
+      if (event.key === 'Enter') {
+        setSpeed(customSpeed.value);
+        customSpeed.blur();
+      }
+    });
+
+    document.getElementById('decreaseSpeed').addEventListener('click', () => changeSpeed(-1));
+    document.getElementById('increaseSpeed').addEventListener('click', () => changeSpeed(1));
+
+    categoryList.addEventListener('change', event => {
+      const card = event.target.closest('.category-card');
+      if (!card) return;
+      const cat = card.dataset.category;
+      if (event.target.classList.contains('cat-active')) categoryInfo[cat].active = event.target.checked;
+      if (event.target.classList.contains('seq-input')) categoryInfo[cat].number = Math.max(1, Number(event.target.value) || categoryInfo[cat].number);
+      categoryStepIndex = 0;
+      resetCategoryWordIndexes();
+      refreshCategoryPages();
+    });
+
+    categoryList.addEventListener('click', event => {
+      const card = event.target.closest('.category-card');
+      if (!card) return;
+      const cat = card.dataset.category;
+      if (event.target.classList.contains('move-up')) categoryInfo[cat].number = Math.max(1, categoryInfo[cat].number - 1);
+      if (event.target.classList.contains('move-down')) categoryInfo[cat].number = categoryInfo[cat].number + 1;
+      if (event.target.classList.contains('move-up') || event.target.classList.contains('move-down')) {
+        categoryStepIndex = 0;
+        resetCategoryWordIndexes();
+        refreshCategoryPages();
+      }
+    });
+
+    document.querySelectorAll('input[name="mode"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        categoryStepIndex = 0;
+        resetCategoryWordIndexes();
+      });
+    });
+
+    promptArea.addEventListener('touchstart', event => {
+      touchStartX = event.changedTouches[0].screenX;
+      touchStartY = event.changedTouches[0].screenY;
+    }, { passive: true });
+
+    promptArea.addEventListener('touchend', event => {
+      const dx = event.changedTouches[0].screenX - touchStartX;
+      const dy = event.changedTouches[0].screenY - touchStartY;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 45) dx < 0 ? next() : prev();
+    }, { passive: true });
+
+    [settingsPage, categoryPage, colorsPage].forEach(page => {
+      page.addEventListener('touchstart', pageSwipeStart, { passive: true });
+      page.addEventListener('touchend', pageSwipeEnd, { passive: true });
+    });
+
+    document.addEventListener('fullscreenchange', exitFullscreenCleanup);
+
+    document.addEventListener('keydown', event => {
+      if (event.code === 'Space') {
+        event.preventDefault();
+        togglePlayPause();
+      }
+      if (event.key === 'ArrowRight') next();
+      if (event.key === 'ArrowLeft') prev();
+      if (event.key.toLowerCase() === 'f') enterFullscreen();
+    });
+
+    resetCategoryWordIndexes();
+    refreshCategoryPages();
+    showItem(prompts[0]);
   </script>
 </body>
 </html>
